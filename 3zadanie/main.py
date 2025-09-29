@@ -1,11 +1,7 @@
 # main.py
 import sys
 from pathlib import Path
-from PyQt5.QtWidgets import (
-    QApplication, QMainWindow, QVBoxLayout, QLabel,
-    QPushButton, QFileDialog, QMessageBox,
-    QGroupBox, QRadioButton, QHBoxLayout
-)
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox
 from PyQt5.QtGui import QPixmap, QImage, qRgb
 from PyQt5.QtCore import Qt
 from PyQt5.uic import loadUi
@@ -15,29 +11,24 @@ class ImageEditor(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        # Загружаем UI
         ui_file = Path(__file__).parent / "image_edit.ui"
         if not ui_file.exists():
             raise FileNotFoundError(f"Не найден файл: {ui_file}")
         loadUi(str(ui_file), self)
 
-        # Переменные
-        self.original_image = None  # QImage
-        self.rotation_count = 0     # количество поворотов на 90°
+        self.original_image = None  
+        self.rotation_count = 0    
 
-        # Настройка радиокнопок
         self.radio_original.setChecked(True)
 
-        # Привязка сигналов
         self.radio_red.toggled.connect(self.update_display)
         self.radio_green.toggled.connect(self.update_display)
         self.radio_blue.toggled.connect(self.update_display)
         self.radio_original.toggled.connect(self.update_display)
         self.btn_rotate_left.clicked.connect(self.rotate_left)
         self.btn_rotate_right.clicked.connect(self.rotate_right)
-        self.btn_save.clicked.connect(self.save_image)  # ← новая кнопка
+        self.btn_save.clicked.connect(self.save_image)  
 
-        # Автоматическая загрузка при старте
         self.load_image_on_start()
 
     def load_image_on_start(self):
@@ -60,7 +51,6 @@ class ImageEditor(QMainWindow):
             self.close()
             return
 
-        # Проверка квадратности
         width, height = pixmap.width(), pixmap.height()
         if abs(width - height) > 10:
             QMessageBox.warning(self, "Предупреждение", "Изображение должно быть квадратным! Будет обрезано.")
@@ -79,10 +69,8 @@ class ImageEditor(QMainWindow):
         if self.original_image is None:
             return
 
-        # Копируем оригинал
         image = self.original_image.copy()
 
-        # Применяем цветовой канал
         if self.radio_red.isChecked():
             image = self.keep_channel(image, 'red')
         elif self.radio_green.isChecked():
@@ -90,19 +78,17 @@ class ImageEditor(QMainWindow):
         elif self.radio_blue.isChecked():
             image = self.keep_channel(image, 'blue')
 
-        # Конвертируем в QPixmap
+        # Конвертирую в QPixmap
         pixmap = QPixmap.fromImage(image)
 
-        # Применяем поворот
         if self.rotation_count != 0:
             from PyQt5.QtGui import QTransform
             transform = QTransform().rotate(90 * self.rotation_count)
             pixmap = pixmap.transformed(transform, Qt.SmoothTransformation)
 
-        # Сохраняем полное изображение для экспорта
-        self.current_pixmap = pixmap  # ← сохраняем для сохранения
+        self.current_pixmap = pixmap  
 
-        # Масштабируем под размер label
+        # Масштабируем 
         scaled = pixmap.scaled(
             self.image_label.size(),
             Qt.KeepAspectRatio,
@@ -154,7 +140,7 @@ class ImageEditor(QMainWindow):
         )
 
         if not file_path:
-            return  # пользователь отменил
+            return  
 
         if self.current_pixmap.save(file_path):
             self.status_label.setText(f"Изображение сохранено: {Path(file_path).name}")
@@ -174,4 +160,4 @@ if __name__ == '__main__':
     window = ImageEditor()
     window.setWindowTitle("Редактор изображений")
     window.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

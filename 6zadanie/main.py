@@ -1,10 +1,7 @@
 # main.py
 import sys
 from pathlib import Path
-from PyQt5.QtWidgets import (
-    QApplication, QMainWindow, QVBoxLayout, QPushButton,
-    QSlider, QLabel, QColorDialog, QMessageBox
-)
+from PyQt5.QtWidgets import QApplication, QMainWindow, QColorDialog
 from PyQt5.QtGui import QPainter, QPen, QBrush, QColor, QPixmap
 from PyQt5.QtCore import Qt
 from PyQt5.uic import loadUi
@@ -14,33 +11,26 @@ class SmileyApp(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        # Загружаем UI
         ui_file = Path(__file__).parent / "smilik.ui"
         if not ui_file.exists():
             raise FileNotFoundError(f"Не найден файл: {ui_file}")
         loadUi(str(ui_file), self)
 
-        # Настройки
-        self.smiley_color = QColor(255, 220, 0)  # Жёлтый по умолчанию
-        self.scale_factor = 1.0  # 100%
+        self.smiley_color = QColor(255, 220, 0)  
+        self.scale_factor = 1.0  
 
-        # Настройка слайдера
         self.scale_slider.setMinimum(10)
         self.scale_slider.setMaximum(200)
         self.scale_slider.setValue(100)
         self.scale_slider.valueChanged.connect(self.update_scale)
 
-        # Текст масштаба
         self.scale_label.setText("100%")
 
-        # Привязка кнопки
         self.btn_color.clicked.connect(self.choose_color)
 
-        # Инициализация холста
         self.canvas.setAlignment(Qt.AlignCenter)
         self.canvas.setMinimumSize(300, 300)
 
-        # Первичная отрисовка
         self.draw_smiley()
 
     def choose_color(self):
@@ -71,7 +61,6 @@ class SmileyApp(QMainWindow):
         painter = QPainter(pixmap)
         painter.setRenderHint(QPainter.Antialiasing)
 
-        # Центр и базовый радиус
         center_x = w // 2
         center_y = h // 2
         base_radius = min(w, h) * 0.4 * self.scale_factor
@@ -118,7 +107,7 @@ class SmileyApp(QMainWindow):
 
         painter.end()
 
-        # Масштабируем под размер label
+        # Масштабирование
         scaled = pixmap.scaled(
             self.canvas.size(),
             Qt.KeepAspectRatio,
@@ -137,4 +126,4 @@ if __name__ == '__main__':
     window = SmileyApp()
     window.setWindowTitle("Смайлик")
     window.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

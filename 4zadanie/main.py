@@ -1,10 +1,7 @@
 # main.py
 import sys
 from pathlib import Path
-from PyQt5.QtWidgets import (
-    QApplication, QMainWindow, QVBoxLayout, QLabel,
-    QPushButton, QFileDialog, QMessageBox, QHBoxLayout
-)
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox
 from PyQt5.QtGui import QPixmap, QImage
 from PyQt5.QtCore import Qt
 from PyQt5.uic import loadUi
@@ -14,28 +11,23 @@ class TransparencyEditor(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        # Загружаем UI
         ui_file = Path(__file__).parent / "transparency.ui"
         if not ui_file.exists():
             raise FileNotFoundError(f"Не найден файл: {ui_file}")
         loadUi(str(ui_file), self)
 
-        # Переменные
         self.original_pixmap = None
         self.current_opacity = 1.0  # от 0.0 до 1.0
 
-        # Настройка слайдера
         self.transparency_slider.setMinimum(0)
         self.transparency_slider.setMaximum(100)
         self.transparency_slider.setValue(100)
         self.percent_label.setText("100%")
-        self.transparency_slider.setEnabled(False)  # пока нет изображения
+        self.transparency_slider.setEnabled(False)  
 
-        # Привязка сигналов
         self.btn_load.clicked.connect(self.load_image)
         self.transparency_slider.valueChanged.connect(self.update_transparency)
-
-        # Инициализация
+        
         self.image_label.setAlignment(Qt.AlignCenter)
         self.image_label.setText("Изображение не загружено")
 
@@ -56,16 +48,14 @@ class TransparencyEditor(QMainWindow):
             QMessageBox.critical(self, "Ошибка", "Не удалось загрузить изображение.")
             return
 
-        # Сохраняем оригинал
+        # Сохраняю оригинал
         self.original_pixmap = pixmap.copy()
         self.current_opacity = 1.0
 
-        # Включаем слайдер
         self.transparency_slider.setEnabled(True)
         self.transparency_slider.setValue(100)
         self.percent_label.setText("100%")
 
-        # Обновляем отображение
         self.apply_transparency()
         self.status_label.setText(f"Изображение загружено: {Path(file_path).name}")
 
@@ -81,12 +71,11 @@ class TransparencyEditor(QMainWindow):
         if self.original_pixmap is None:
             return
 
-        # Конвертируем в QImage для манипуляций
+        # Конвертируем для манипуляций
         image = self.original_pixmap.toImage()
         width = image.width()
         height = image.height()
 
-        # Создаём новое изображение с альфа-каналом
         result_image = QImage(width, height, QImage.Format_ARGB32)
 
         for y in range(height):
@@ -96,10 +85,8 @@ class TransparencyEditor(QMainWindow):
                 pixel.setAlpha(alpha)
                 result_image.setPixelColor(x, y, pixel)
 
-        # Обратно в QPixmap
         result_pixmap = QPixmap.fromImage(result_image)
 
-        # Масштабируем под размер label
         scaled_pixmap = result_pixmap.scaled(
             self.image_label.size(),
             Qt.KeepAspectRatio,
@@ -119,4 +106,4 @@ if __name__ == '__main__':
     window = TransparencyEditor()
     window.setWindowTitle("Регулятор прозрачности изображения")
     window.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

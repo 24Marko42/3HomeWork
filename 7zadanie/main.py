@@ -1,12 +1,9 @@
 # main.py
 import sys
 from pathlib import Path
-from PyQt5.QtWidgets import (
-    QApplication, QMainWindow, QPushButton, QLabel, QFileDialog, QMessageBox,
-    QVBoxLayout, QHBoxLayout, QWidget
-)
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QMessageBox
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
-from PyQt5.QtCore import QUrl, QRect
+from PyQt5.QtCore import QUrl
 from PyQt5.uic import loadUi
 
 
@@ -14,20 +11,16 @@ class PianoApp(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        # Загружаем интерфейс из .ui файла
         ui_file = Path(__file__).parent / "piano.ui"
         if not ui_file.exists():
             raise FileNotFoundError(f"Не найден файл интерфейса: {ui_file.resolve()}")
         loadUi(str(ui_file), self)
 
-        # Путь к папке со звуками
         self.sound_dir = Path(__file__).parent / "sounds"
 
-        # Проверяем наличие звуков
         if not self.sound_dir.exists():
             QMessageBox.warning(self, "Предупреждение", f"Папка 'sounds' не найдена. Фортепиано будет работать без звука.")
 
-        # Список нот и соответствующих файлов
         self.notes = {
             'A3#': 'A3#.mp3',
             'A5': 'A5.mp3',
@@ -61,10 +54,8 @@ class PianoApp(QMainWindow):
         # Медиаплеер
         self.player = QMediaPlayer()
 
-        # Привязка сигналов
         self.setup_key_connections()
 
-        # Статус
         self.status_label.setText("Фортепиано готово")
 
     def create_black_keys(self):
@@ -81,7 +72,7 @@ class PianoApp(QMainWindow):
             btn = QPushButton(note, self)
             btn.setStyleSheet("background-color: black; color: white;")
             btn.setFixedSize(40, 120)
-            btn.setParent(self)  # размещаем на главной форме
+            btn.setParent(self)  
             self.black_keys[note] = btn
 
     def resizeEvent(self, event):
@@ -151,4 +142,4 @@ if __name__ == '__main__':
     window = PianoApp()
     window.setWindowTitle("Виртуальное фортепиано")
     window.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

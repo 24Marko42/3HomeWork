@@ -1,9 +1,7 @@
 # main.py
 import sys
 from pathlib import Path
-from PyQt5.QtWidgets import (
-    QApplication, QMainWindow, QFileDialog, QMessageBox, QAction
-)
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QMessageBox
 from PyQt5.uic import loadUi
 
 
@@ -11,25 +9,20 @@ class TextEditor(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        # Загружаем UI
         ui_file = Path(__file__).parent / "editor.ui"
         if not ui_file.exists():
             raise FileNotFoundError(f"Не найден файл: {ui_file}")
         loadUi(str(ui_file), self)
 
-        # Текущий путь к файлу
         self.current_file = None
-        self.is_modified = False  # флаг изменений
+        self.is_modified = False  
 
-        # Привязка действий
-        self.action_new.clicked.connect(self.new_file)    # clicked вместо triggered
+        self.action_new.clicked.connect(self.new_file)    
         self.action_open.clicked.connect(self.open_file)
         self.action_save.clicked.connect(self.save_file)
 
-        # Отслеживание изменений
         self.text_edit.textChanged.connect(self.on_text_changed)
 
-        # Инициализация
         self.setup_window_title()
 
     def setup_window_title(self):
@@ -146,4 +139,4 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     window = TextEditor()
     window.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

@@ -2,10 +2,7 @@
 import sys
 import random
 from pathlib import Path
-from PyQt5.QtWidgets import (
-    QApplication, QMainWindow, QVBoxLayout, QLabel,
-    QPushButton, QInputDialog, QMessageBox
-)
+from PyQt5.QtWidgets import QApplication, QMainWindow, QInputDialog
 from PyQt5.QtGui import QPixmap, QPainter, QColor
 from PyQt5.QtCore import Qt
 from PyQt5.uic import loadUi
@@ -15,16 +12,13 @@ class FlagGenerator(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        # Загружаем UI
         ui_file = Path(__file__).parent / "generator_flaga.ui"
         if not ui_file.exists():
             raise FileNotFoundError(f"Не найден файл: {ui_file}")
         loadUi(str(ui_file), self)
 
-        # Привязка кнопки
         self.btn_generate.clicked.connect(self.generate_flag)
 
-        # Инициализация
         self.flag_pixmap = None
         self.status_label.setText("Нажмите 'Сгенерировать'")
 
@@ -40,9 +34,8 @@ class FlagGenerator(QMainWindow):
         )
 
         if not ok:
-            return  # пользователь нажал Cancel
+            return  
 
-        # Получаем размер холста
         width = self.flag_label.width()
         height = self.flag_label.height()
 
@@ -50,12 +43,10 @@ class FlagGenerator(QMainWindow):
             width = 400
             height = 300
 
-        # Создаём пустое изображение
         self.flag_pixmap = QPixmap(width, height)
         self.flag_pixmap.fill(Qt.white)
         painter = QPainter(self.flag_pixmap)
 
-        # Высота одной полосы
         stripe_height = height / num_stripes
 
         # Рисуем полосы
@@ -71,7 +62,6 @@ class FlagGenerator(QMainWindow):
 
         painter.end()
 
-        # Обновляем отображение
         self.update_display()
         self.status_label.setText(f"Флаг с {num_stripes} полосами сгенерирован.")
 
@@ -100,4 +90,4 @@ if __name__ == '__main__':
     window = FlagGenerator()
     window.setWindowTitle("Генератор полосатого флага")
     window.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

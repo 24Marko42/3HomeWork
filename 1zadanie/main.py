@@ -9,20 +9,16 @@ class NumberAnalyzer(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        # Загружаем интерфейс
         ui_file = Path(__file__).parent / "numbers_analysis.ui"
         if not ui_file.exists():
             raise FileNotFoundError(f"Не найден файл: {ui_file}")
         loadUi(str(ui_file), self)
 
-        # Запоминаем папку
         self.current_directory = str(Path.cwd())
 
-        # Привязываем кнопки
-        self.loadButton.clicked.connect(self.load_file)   # ✅
-        self.saveButton_2.clicked.connect(self.save_results)  # ✅
+        self.loadButton.clicked.connect(self.load_file)   
+        self.saveButton_2.clicked.connect(self.save_results)  
 
-        # Результаты
         self.numbers = []
         self.clear_results()
 
@@ -35,7 +31,6 @@ class NumberAnalyzer(QMainWindow):
     def show_status(self, message):
         self.statusBar().showMessage(message)
 
-    # ✅ МЕТОД ДОЛЖЕН БЫТЬ ЗДЕСЬ — ВНУТРИ КЛАССА
     def load_file(self):
         file_path, _ = QFileDialog.getOpenFileName(
             self,
@@ -82,7 +77,6 @@ class NumberAnalyzer(QMainWindow):
             self.show_status("Ошибка")
             QMessageBox.critical(self, "Ошибка", f"Не удалось прочитать файл:\n{str(e)}")
 
-    # ✅ И ЭТОТ ТОЖЕ ВНУТРИ
     def save_results(self):
         if not self.numbers:
             QMessageBox.warning(self, "Предупреждение", "Сначала загрузите данные.")
@@ -118,4 +112,4 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     window = NumberAnalyzer()
     window.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
